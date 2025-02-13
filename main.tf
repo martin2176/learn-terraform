@@ -1,31 +1,34 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
-provider "aws" {
-  region = var.region
-}
-
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+# Configure the Azure provider
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0.2"
+    }
   }
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
+  required_version = ">= 1.1.0"
 }
 
-resource "aws_instance" "ubuntu" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg1" {
+  name     = var.resource_group_name
+  location = "eastus2"
 
   tags = {
-    Name = var.instance_name
+    Environment = "Terraform Getting Started"
+    Team        = "DevOpsTeam"
   }
 }
+
+# Create a virtual network
+resource "azurerm_virtual_network" "vnet" {
+  name                = "myTFVnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = "eastus2"
+  resource_group_name = azurerm_resource_group.rg1.name
+}
+

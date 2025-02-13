@@ -1,11 +1,3 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
-output "instance_ami" {
-  value = aws_instance.ubuntu.ami
+output "rg1" {
+  value = azurerm_resource_group.rg1.id
 }
-
-output "instance_arn" {
-  value = aws_instance.ubuntu.arn
-}
-
